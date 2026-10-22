@@ -10,6 +10,10 @@ import "@fontsource/instrument-serif/400-italic.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  // Set by `npm run build:pages` so OG/canonical URLs resolve on GitHub Pages.
+  ...(process.env.NEXT_PUBLIC_SITE_ORIGIN
+    ? { metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_ORIGIN) }
+    : {}),
   title: "Dusyanth — Developer, AI Explorer & Builder",
   description:
     "Portfolio of Dusyanth — AI & Data Science student at VIIT. Building autonomous systems, multi-agent workflows, and production-grade developer tooling.",
