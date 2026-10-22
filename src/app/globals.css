@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Instrument+Serif:ital@0;1&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&display=swap');
+@import "tailwindcss";
+
+/* ============================================================ */
+/* DESIGN SYSTEM — Dusyanth Cinematic Portfolio                  */
+/* Source: Google Stitch design export                           */
+/* ============================================================ */
+
+/* ----- CSS Custom Properties ----- */
+:root {
+  /* Surface Tiers */
+  --ink-black: #0B0C10;
+  --surface-dark: #121317;
+  --surface-card: #14151B;
+  --surface-elevated: #17181C;
+  --surface-container: #1F1F24;
+  --surface-high: #292A2E;
+  --surface-highest: #343439;
+
+  /* Primary Accents */
+  --oxblood: #8E343B;
+  --oxblood-dim: #5E1E24;
+  --oxblood-light: #FFB3B4;
+  --oxblood-glow: rgba(142, 52, 59, 0.35);
+
+  /* Secondary */
+  --electric-blue: #356BCE;
+  --electric-blue-glow: rgba(53, 107, 206, 0.35);
+  --secondary-light: #AFC6FF;
+
+  /* Tertiary */
+  --ice-cyan: #A3D9E8;
+  --cyan-glow: #99CFDE;
+  --cyan-glow-alpha: rgba(153, 207, 222, 0.35);
+
+  /* Text */
+  --paper: #F2EFE7;
+  --paper-text: #111215;
+  --mineral-grey: #D5D0C6;
+  --on-surface: #E3E2E8;
+  --on-surface-variant: #DBC0C0;
+
+  /* Utility */
+  --outline: #A38B8B;
+  --outline-variant: #554242;
+
+  /* About section warm background */
+  --about-bg: #EDE8DF;
+  --about-border: #DDD7CD;
+
+  /* Spacing */
+  --gutter: 1.5rem;
+  --gutter-desktop: 2.5rem;
+  --margin: 1.25rem;
+  --margin-desktop: 4rem;
+}
+
+/* ----- Global Base ----- */
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--ink-black);
+  color: var(--on-surface);
+  font-family: 'Space Grotesk', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--oxblood);
+  color: #ffffff;
+}
+
+/* Hide scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ----- Font Utilities ----- */
+.font-display {
+  font-family: 'Syne', sans-serif;
+}
+
+.font-editorial {
+  font-family: 'Newsreader', 'Instrument Serif', Georgia, serif;
+}
+
+.font-body {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ----- Typography Scale ----- */
+.text-display-hero {
+  font-family: 'Syne', sans-serif;
+  font-size: 80px;
+  font-weight: 800;
+  line-height: 88px;
+  letter-spacing: -0.03em;
+}
+
+.text-headline-lg {
+  font-family: 'Syne', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 56px;
+  letter-spacing: -0.02em;
+}
+
+.text-headline-md {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 36px;
+  letter-spacing: -0.01em;
+}
+
+.text-headline-sm {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+.text-body-lg {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: 0.01em;
+}
+
+.text-body-md {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.text-body-sm {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.text-label-tech {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.06em;
+}
+
+.text-label-xs {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0.08em;
+}
+
+/* ----- Ambient Glow Mesh Background ----- */
+.ambient-glow-mesh {
+  background:
+    radial-gradient(circle at 50% 30%, rgba(142, 52, 59, 0.16) 0%, rgba(11, 12, 16, 0) 70%),
+    radial-gradient(circle at 15% 80%, rgba(53, 107, 206, 0.12) 0%, rgba(11, 12, 16, 0) 60%),
+    radial-gradient(circle at 85% 70%, rgba(163, 217, 232, 0.07) 0%, rgba(11, 12, 16, 0) 50%);
+}
+
+/* ----- Glass Effects ----- */
+.glass-dock {
+  background: rgba(18, 19, 25, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(20, 21, 27, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ----- Subtle Background Grid ----- */
+.bg-grid-subtle {
+  background-image: radial-gradient(#ffffff 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.03;
+}
+
+/* ----- Reduced Motion ----- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ----- Mobile Responsive Typography ----- */
+@media (max-width: 768px) {
+  .text-display-hero {
+    font-size: 44px;
+    line-height: 50px;
+    letter-spacing: -0.02em;
+  }
+
+  .text-headline-lg {
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: -0.01em;
+  }
+}
