@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -19,6 +20,11 @@ export default function Navbar() {
     // Check a point at 45% of viewport height to determine which section is currently viewed
     const viewportCheckY = window.innerHeight * 0.45;
 
+    const pinned = ScrollTrigger.getAll().find(t => t.isActive && t.vars.pin && t.vars.id);
+    if (pinned) {
+      const id = pinned.trigger?.closest("section")?.id;
+      if (id) { setActiveSection(id); return; }
+    }
     let current = "hero";
     // Iterate in reverse so that sections lower on the page take priority
     for (let i = NAV_ITEMS.length - 1; i >= 0; i--) {
@@ -40,7 +46,12 @@ export default function Navbar() {
     window.addEventListener("scroll", updateActiveNav, { passive: true });
     window.addEventListener("resize", updateActiveNav, { passive: true });
     updateActiveNav();
+    const hashTimer = setTimeout(() => {
+      const id = location.hash.slice(1);
+      if (id && document.getElementById(id)) navigate(id);
+    }, 500);
     return () => {
+      clearTimeout(hashTimer);
       window.removeEventListener("scroll", updateActiveNav);
       window.removeEventListener("resize", updateActiveNav);
     };
@@ -51,13 +62,8 @@ export default function Navbar() {
     id: string
   ) => {
     e.preventDefault();
-    const lenis = (window as unknown as { __lenis?: { scrollTo: (target: HTMLElement | string) => void } }).__lenis;
-    const el = document.getElementById(id);
-    if (lenis && el) {
-      lenis.scrollTo(el);
-    } else if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
+    history.pushState(null, "", `#${id}`);
+    navigate(id);
   };
 
   return (
@@ -69,6 +75,7 @@ export default function Navbar() {
             <a
               key={item.id}
               href={`#${item.id}`}
+              aria-current={isActive ? "location" : undefined}
               onClick={(e) => handleNavClick(e, item.id)}
               className={cn(
                 "nav-item flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full transition-all duration-300",
@@ -87,4 +94,14 @@ export default function Navbar() {
       </nav>
     </header>
   );
+}
+
+function navigate(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const trigger = ScrollTrigger.getAll().find(t => t.vars.pin && t.trigger?.closest("section")?.id === id);
+  const target = trigger ? trigger.start : el.getBoundingClientRect().top + window.scrollY;
+  const lenis = (window as unknown as { __lenis?: { scrollTo(target: number): void } }).__lenis;
+  if (lenis) lenis.scrollTo(target);
+  else window.scrollTo({ top: target, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
 }

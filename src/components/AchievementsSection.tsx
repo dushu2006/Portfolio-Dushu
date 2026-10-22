@@ -3,7 +3,7 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Award, Trophy, Users, ShieldCheck, Flame, Sparkles, Star } from "lucide-react";
+import { Award, Trophy, Users, ShieldCheck, Flame, Sparkles } from "lucide-react";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -31,10 +31,8 @@ const ACHIEVEMENTS: AchievementItem[] = [
     number: "01",
     mainHeading: "1ST PRIZE",
     secondaryLabel: "SAMARTHA",
-    badge: "VIIT COMP",
-    headline: "1st Place Laureate. Computational automation built under 36 hours.",
-    description:
-      "Engineered an automated computational workflow solution beating out 50+ university teams under strict algorithmic benchmarks.",
+    headline: "First prize at Samartha.",
+    description: "Recognition for a hackathon project.",
     accentColor: "#ff4d4f",
     badgeBg: "bg-[#ff4d4f]/15",
     badgeText: "text-[#ff7875]",
@@ -47,10 +45,8 @@ const ACHIEVEMENTS: AchievementItem[] = [
     number: "02",
     mainHeading: "2ND PRIZE",
     secondaryLabel: "HACKMATRIX",
-    badge: "REGIONAL LEVEL",
-    headline: "High-performance autonomous agents and distributed systems.",
-    description:
-      "Awarded second place across regional competitors for deploying resilient AI agents with real-time state orchestration.",
+    headline: "Second prize at Hackmatrix.",
+    description: "Recognition for a hackathon project.",
     accentColor: "#e65100",
     badgeBg: "bg-[#ff9800]/15",
     badgeText: "text-[#ffb74d]",
@@ -63,10 +59,8 @@ const ACHIEVEMENTS: AchievementItem[] = [
     number: "03",
     mainHeading: "CO-FOUNDER",
     secondaryLabel: "DENVUP",
-    badge: "STUDENT NETWORK",
-    headline: "Building the next-gen student tech incubator & developer network.",
-    description:
-      "Co-founded and scaled student developer infrastructure, hosting hack sessions, mentorship syncs, and collaborative product sprints.",
+    headline: "Co-founding Denvup.",
+    description: "Contributing to a digital agency as co-founder.",
     accentColor: "#ff0055",
     badgeBg: "bg-[#ff0055]/15",
     badgeText: "text-[#ff6699]",
@@ -77,12 +71,10 @@ const ACHIEVEMENTS: AchievementItem[] = [
   {
     id: "hackathon-experience",
     number: "04",
-    mainHeading: "10+ HACKATHONS",
-    secondaryLabel: "HACKATHON EXPERIENCE",
-    badge: "TEAM LEAD",
-    headline: "Participated in 10+ hackathons, serving as team lead in all of them.",
-    description:
-      "Spearheaded multi-developer engineering squads across 10+ intense hackathons, serving as team lead and lead architect in all of them with zero downtime.",
+    mainHeading: "HACKATHON TEAM LEAD",
+    secondaryLabel: "10+ HACKATHONS",
+    headline: "Building together under time constraints.",
+    description: "Team leadership across hackathon projects.",
     accentColor: "#2979ff",
     badgeBg: "bg-[#2979ff]/15",
     badgeText: "text-[#82b1ff]",
@@ -95,10 +87,8 @@ const ACHIEVEMENTS: AchievementItem[] = [
     number: "05",
     mainHeading: "FIRST-YEAR LEAD",
     secondaryLabel: "STUDENT SPOT · VIIT",
-    badge: "APPOINTED MENTOR",
-    headline: "Direct liaison and technical mentor for incoming developers.",
-    description:
-      "Selected to onboard and guide junior cohorts at Student Spot VIIT, providing architectural code reviews and roadmap workshops.",
+    headline: "First-year leadership at Student Spot.",
+    description: "A student leadership role at VIIT.",
     accentColor: "#00e5ff",
     badgeBg: "bg-[#00e5ff]/15",
     badgeText: "text-[#84ffff]",
@@ -111,10 +101,8 @@ const ACHIEVEMENTS: AchievementItem[] = [
     number: "06",
     mainHeading: "EVENT ORGANIZING LEAD",
     secondaryLabel: "AI & DS CLUB",
-    badge: "DIRECTOR",
-    headline: "Conducted department-wide AI hackathons and code masterclasses.",
-    description:
-      "Orchestrated departmental innovation challenges, authoring problem statements, running jury evaluations, and hands-on workshops.",
+    headline: "Organizing for the AI & DS community.",
+    description: "Helping organize branch events and activities.",
     accentColor: "#7c4dff",
     badgeBg: "bg-[#7c4dff]/15",
     badgeText: "text-[#b388ff]",
@@ -130,117 +118,40 @@ export default function AchievementsSection() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    const pinWrap = pinWrapRef.current;
-    const header = headerRef.current;
-    if (!pinWrap) return;
-
-    if (header) {
-      gsap.fromTo(
-        header,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: pinWrap,
-            start: "top 85%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
-    }
-
+    const stage = pinWrapRef.current;
+    if (!stage) return;
     const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
-    const totalCards = cards.length;
-    if (totalCards === 0) return;
-
-    // Apply positions along the upward-convex arch
-    const applyPositions = (progress: number, isDesktop: boolean) => {
-      const currentProgress = progress * (totalCards - 1);
-
-      // Y base centers the card deck gracefully inside the viewport stage
-      const yBase = isDesktop ? 25 : 15;
-      const xDist = isDesktop ? 620 : 340;
-      const yCurvature = isDesktop ? 60 : 42;
-      const rotFactor = isDesktop ? 16 : 12;
-
-      cards.forEach((card, i) => {
-        const offset = i - currentProgress;
-        const x = offset * xDist;
-        const y = yBase + Math.pow(offset, 2) * yCurvature;
-        const rotation = offset * rotFactor - 2;
-        const scale = Math.max(0.75, 1 - Math.abs(offset) * 0.08);
-        const zIndex = Math.round(30 - Math.abs(offset) * 5);
-        // Smooth opacity falloff prevents edge crowding and unwanted overflow
-        const opacity = Math.max(0, 1 - Math.abs(offset) * 0.42);
-
-        gsap.set(card, {
-          x,
-          y,
-          rotation,
-          scale,
-          zIndex,
-          opacity,
-          pointerEvents: Math.abs(offset) < 1.2 ? "auto" : "none",
-          transformOrigin: "center 75%",
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const position = (progress: number) => {
+        const radius = stage.clientHeight * (stage.clientHeight < 500 ? .30 : innerWidth < 768 ? .43 : .46);
+        const travel = progress * (cards.length - 1);
+        cards.forEach((card, i) => {
+          const offset = i - travel;
+          const angle = Math.PI / 2 - offset * 1.05;
+          const inArc = angle > -.15 && angle < Math.PI + .15;
+          gsap.set(card, {
+            x: Math.cos(angle) * Math.min(innerWidth * .65, radius * 1.65),
+            y: -Math.sin(angle) * radius,
+            rotation: offset * 12,
+            scale: Math.max(.8, 1 - Math.abs(offset) * .1),
+            opacity: inArc ? Math.max(0, 1 - Math.abs(offset) * .65) : 0,
+            visibility: inArc ? "visible" : "hidden",
+            zIndex: Math.round(30 - Math.abs(offset) * 5),
+          });
         });
+      };
+      position(0);
+      ScrollTrigger.create({ id: "achievement-wheel", trigger: stage, start: "top top", end: () => {
+        const radius = stage.clientHeight * (stage.clientHeight < 500 ? .30 : innerWidth < 768 ? .43 : .46);
+        const horizontalRadius = Math.min(innerWidth * .65, radius * 1.65);
+        // Arc length per card plus the final 6% reading dwell (same .94 as position).
+        return `+=${(cards.length - 1) * 1.05 * Math.hypot(horizontalRadius, radius) / Math.SQRT2 / .94}`;
+      }, pin: true, invalidateOnRefresh: true,
+        onUpdate: self => position(Math.min(1, self.progress / .94)), onRefresh: self => position(Math.min(1, self.progress / .94)),
       });
-    };
-
-    applyPositions(0, window.innerWidth >= 768);
-
-    const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
-
-      // DESKTOP (> 768px)
-      mm.add("(min-width: 769px)", () => {
-        const scrollDistPerCard = 600;
-        const totalScroll = (totalCards - 1) * scrollDistPerCard;
-
-        ScrollTrigger.create({
-          trigger: pinWrap,
-          start: "top top",
-          end: `+=${totalScroll}`,
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            applyPositions(self.progress, true);
-          },
-        });
-      });
-
-      // MOBILE (<= 768px)
-      mm.add("(max-width: 768px)", () => {
-        const scrollDistPerCard = 480;
-        const totalScroll = (totalCards - 1) * scrollDistPerCard;
-
-        ScrollTrigger.create({
-          trigger: pinWrap,
-          start: "top top",
-          end: `+=${totalScroll}`,
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            applyPositions(self.progress, false);
-          },
-        });
-      });
-    }, pinWrapRef);
-
-    const timer = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 200);
-
-    return () => {
-      clearTimeout(timer);
-      ctx.revert();
-    };
+    });
+    return () => mm.revert();
   }, []);
 
   return (
@@ -248,7 +159,7 @@ export default function AchievementsSection() {
       {/* Pinned inner wrapper prevents Next.js HMR removeChild errors */}
       <div
         ref={pinWrapRef}
-        className="relative w-full h-screen min-h-[720px] flex flex-col justify-between pt-16 sm:pt-20 lg:pt-24 pb-8 sm:pb-10 overflow-hidden select-none"
+        className="achievement-stage relative w-full flex flex-col pt-20 overflow-hidden"
       >
         {/* Background Subtle Ambience */}
         <div className="absolute inset-0 bg-radial-vignette pointer-events-none opacity-60" />
@@ -258,7 +169,7 @@ export default function AchievementsSection() {
           <div>
             <div className="flex items-center gap-2 mb-2 font-mono text-[11px] uppercase tracking-widest text-white/50">
               <span className="w-2 h-2 rounded-full bg-[#ff4d4f] animate-pulse" />
-              <span>06 VERIFIED RECOGNITIONS</span>
+              <span>06 / ACHIEVEMENTS & ROLES</span>
             </div>
             <h2 className="font-editorial text-3xl sm:text-5xl text-white font-normal uppercase tracking-tight">
               Achievements &amp; Leadership
@@ -267,7 +178,7 @@ export default function AchievementsSection() {
         </div>
 
         {/* Main Semicircular Wheel Stage */}
-        <div className="relative flex-1 w-full flex items-center justify-center overflow-visible">
+        <div className="achievement-wheel absolute inset-0">
           {ACHIEVEMENTS.map((card, index) => {
             const IconComp = card.icon;
 
@@ -277,15 +188,15 @@ export default function AchievementsSection() {
                 ref={(el) => {
                   cardRefs.current[index] = el;
                 }}
-                className="absolute will-change-transform select-none cursor-grab active:cursor-grabbing pointer-events-auto"
+                className="achievement-position absolute will-change-transform select-none"
                 style={{
                   left: "50%",
-                  top: "50%",
+                  top: "100%",
                 }}
               >
                 {/* Large rounded Huge Inc Style Card Tile */}
                 <div
-                  className={`relative w-[300px] h-[380px] sm:w-[420px] sm:h-[480px] md:w-[460px] md:h-[500px] -translate-x-1/2 -translate-y-1/2 rounded-[32px] sm:rounded-[38px] p-7 sm:p-9 flex flex-col justify-between overflow-hidden bg-gradient-to-br ${card.bgGradient} border ${card.cardBorder} shadow-[0_30px_90px_rgba(0,0,0,0.85)] transition-shadow duration-300`}
+                  className={`achievement-card relative w-[300px] h-[380px] sm:w-[420px] sm:h-[480px] md:w-[460px] md:h-[500px] -translate-x-1/2 -translate-y-1/2 rounded-[32px] sm:rounded-[38px] p-7 sm:p-9 flex flex-col justify-between overflow-hidden bg-gradient-to-br ${card.bgGradient} border ${card.cardBorder} shadow-[0_30px_90px_rgba(0,0,0,0.85)] transition-shadow duration-300`}
                 >
                   {/* Subtle Inner Glow */}
                   <div
@@ -334,7 +245,7 @@ export default function AchievementsSection() {
                     {/* Bottom bar with card number */}
                     <div className="flex items-center justify-between pt-3.5 mt-1 border-t border-white/10 text-xs font-mono text-white/40">
                       <span className="tracking-widest uppercase text-[10px]">
-                        VERIFIED MERIT
+                        MILESTONE
                       </span>
                       <span className="font-bold text-white/80">
                         {card.number}

@@ -23,7 +23,6 @@ export default function DecryptedText({
   speed = 30,
   maxIterations = 8,
   sequential = true,
-  revealDirection = "start",
   useOriginalCharsOnly = false,
   characters = DEFAULT_CHARS,
   className = "",
@@ -36,6 +35,8 @@ export default function DecryptedText({
   const containerRef = useRef<HTMLSpanElement>(null);
   const hasAnimatedRef = useRef(false);
   const isRunningRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
 
   const getNextChar = useCallback(
     (originalChar: string) => {
@@ -50,7 +51,7 @@ export default function DecryptedText({
   );
 
   const runDecryption = useCallback(() => {
-    if (isRunningRef.current) return;
+    if (isRunningRef.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     isRunningRef.current = true;
     setIsDecrypted(false);
 
@@ -59,7 +60,7 @@ export default function DecryptedText({
     let iteration = 0;
     const totalIterations = Math.max(12, maxIterations * 3);
 
-    const timer = setInterval(() => {
+    const timer = timerRef.current = setInterval(() => {
       iteration++;
       const progress = iteration / totalIterations;
 
@@ -128,7 +129,7 @@ export default function DecryptedText({
     setDisplayText(text);
     hasAnimatedRef.current = false;
     if (animateOn === "view" && containerRef.current) {
-      runDecryption();
+      return runDecryption();
     }
   }, [text, animateOn, runDecryption]);
 

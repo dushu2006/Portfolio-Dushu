@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   ArrowUp,
   Mail,
@@ -7,7 +8,6 @@ import {
   Link as LinkIcon,
   Phone,
   Clock,
-  ExternalLink,
 } from "lucide-react";
 
 export default function Footer() {
@@ -16,7 +16,7 @@ export default function Footer() {
     if (lenis) {
       lenis.scrollTo(0);
     } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
     }
   };
 
@@ -33,7 +33,7 @@ export default function Footer() {
                   DUSYANTH
                 </span>
                 <span className="font-mono text-[10px] uppercase px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[#99CFDE]">
-                  AI &amp; DS // VIIT
+                  AI &amp; DS {"// VIIT"}
                 </span>
               </div>
               <p className="text-sm text-white/70 max-w-sm leading-relaxed mb-6">
@@ -60,7 +60,7 @@ export default function Footer() {
           <div className="lg:col-span-4 grid grid-cols-2 gap-6 font-mono text-xs">
             <div>
               <span className="text-[#ffb3b4] text-[10px] uppercase tracking-widest block mb-4 font-semibold">
-                // NAVIGATION
+                {"// NAVIGATION"}
               </span>
               <ul className="space-y-2.5 text-white/60">
                 <li>
@@ -91,7 +91,7 @@ export default function Footer() {
                     href="#achievements"
                     className="hover:text-white transition-colors block"
                   >
-                    05. Accreditations
+                    05. Achievements
                   </a>
                 </li>
                 <li>
@@ -103,7 +103,7 @@ export default function Footer() {
             </div>
             <div>
               <span className="text-[#99CFDE] text-[10px] uppercase tracking-widest block mb-4 font-semibold">
-                // ARTIFACTS
+                {"// ARTIFACTS"}
               </span>
               <ul className="space-y-2.5 text-white/60">
                 <li>
@@ -134,7 +134,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     className="hover:text-white transition-colors block"
                   >
-                    SmartPlant IoT
+                    SmartPlant
                   </a>
                 </li>
                 <li>
@@ -144,7 +144,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     className="hover:text-white transition-colors block"
                   >
-                    DropZone P2P
+                    DropZone
                   </a>
                 </li>
                 <li>
@@ -158,9 +158,9 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a href="#projects" className="hover:text-[#99CFDE] transition-colors block">
-                    View All (10+)
-                  </a>
+                  <Link href="/projects" className="hover:text-[#99CFDE] transition-colors block">
+                    View All (10)
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -170,7 +170,7 @@ export default function Footer() {
           <div className="lg:col-span-3 flex flex-col justify-between items-start lg:items-end">
             <div className="w-full lg:text-right">
               <span className="font-mono text-[#ffb3b4] text-[10px] uppercase tracking-widest block mb-4 font-semibold">
-                // VERIFIED COORDINATES
+                {"// VERIFIED COORDINATES"}
               </span>
               <div className="space-y-2.5 font-mono text-xs text-white/70">
                 <div>
@@ -245,7 +245,7 @@ export default function Footer() {
             className="font-editorial uppercase fill-white/[0.10] hover:fill-white/[0.28] stroke-white/[0.05] hover:stroke-[#99CFDE]/40 transition-all duration-500 cursor-default select-none filter hover:drop-shadow-[0_0_90px_rgba(142,52,59,0.5)]"
             style={{
               fontSize: "260px",
-              fontFamily: "'Newsreader', 'Instrument Serif', Georgia, serif",
+              fontFamily: "'Newsreader Variable', 'Instrument Serif', Georgia, serif",
               letterSpacing: "0.015em",
               fontWeight: 400,
             }}
@@ -265,7 +265,7 @@ export default function Footer() {
             </span>
           </div>
           <div className="font-mono text-[11px] text-white/40 tracking-wide">
-            © 2025 Dusyanth. All rights reserved.
+            © {new Date().getFullYear()} Dusyanth. All rights reserved.
           </div>
         </div>
       </div>

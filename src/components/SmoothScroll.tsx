@@ -27,13 +27,14 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
 
     // Initialize Lenis smooth scroll
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 0.9,
+      anchors: true,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
       wheelMultiplier: 1,
-      touchMultiplier: 1.5,
+      syncTouch: false, // Preserve native touch inertia; do not synthesize a second one.
     });
 
     // Synchronize Lenis scroll position with GSAP ScrollTrigger
@@ -59,7 +60,7 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
       clearTimeout(refreshTimer);
       gsap.ticker.remove(tickerCallback);
       lenis.destroy();
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      delete (window as unknown as { __lenis?: Lenis }).__lenis;
     };
   }, []);
 

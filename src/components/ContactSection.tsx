@@ -16,6 +16,8 @@ export default function ContactSection() {
 
   const [transmitting, setTransmitting] = useState(false);
   const [transmitted, setTransmitted] = useState(false);
+  const [status, setStatus] = useState("");
+  const busy = useRef(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -29,6 +31,7 @@ export default function ContactSection() {
     const formCard = formCardRef.current;
     if (!section || !leftCol || !formCard) return;
 
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
         leftCol,
@@ -67,24 +70,26 @@ export default function ContactSection() {
     return () => ctx.revert();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const mailto = `mailto:dushyanthtanna@gmail.com?subject=${encodeURIComponent(`Portfolio enquiry: ${formData.vector}`)}&body=${encodeURIComponent(`From: ${formData.name} <${formData.email}>\n\n${formData.message}`)}`;
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setTransmitting(true);
-    setTimeout(async () => {
-      setTransmitting(false);
-      setTransmitted(true);
-      try {
-        const confetti = (await import("canvas-confetti")).default;
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ["#8E343B", "#356BCE", "#99CFDE", "#F2EFE7"],
-        });
-      } catch {
-        // Fallback gracefully if canvas-confetti is not loaded
+    if (busy.current) return;
+    busy.current = true;
+    setTransmitting(true); setStatus("Sending your message…");
+    try {
+      const response = await fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData), signal: AbortSignal.timeout(15000) });
+      const data = await response.json();
+      if (data.fallback) { setStatus("Online sending is not configured. Use ‘Open email client’ below, then send the prepared message in your email app. Nothing has been sent yet."); return; }
+      if (!response.ok || !data.accepted) throw new Error(data.error || "Unable to send your message.");
+      setTransmitted(true); setStatus("The email service accepted your message. Delivery is not yet confirmed.");
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        try {
+          const confetti = (await import("canvas-confetti")).default;
+          confetti({ particleCount: 45, spread: 55, colors: ["#8E343B", "#99CFDE"] });
+        } catch { /* Optional feedback must never turn accepted submission into an error. */ }
       }
-    }, 800);
+    } catch (error) { setStatus(error instanceof Error ? error.message : "Unable to send. Please use the email-client option."); }
+    finally { busy.current = false; setTransmitting(false); }
   };
 
   return (
@@ -186,20 +191,21 @@ export default function ContactSection() {
           <div ref={formCardRef} className="lg:col-span-5 glass-card p-6 sm:p-8 rounded-2xl flex flex-col justify-between shadow-2xl">
             <div>
               <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-6 font-mono text-xs text-white/40">
-                <span className="text-[#99CFDE]">// FAST TRANSMIT BUFFER</span>
+                <span className="text-[#99CFDE]">{"// FAST TRANSMIT BUFFER"}</span>
                 <span>DIRECT.MSG</span>
               </div>
 
+              <p role="status" aria-live="polite" className="text-sm text-[#99CFDE] mb-4">{status}</p>
               {transmitted ? (
                 <div className="py-12 flex flex-col items-center justify-center text-center space-y-4">
                   <div className="w-12 h-12 rounded-full bg-[#99CFDE]/10 border border-[#99CFDE]/40 flex items-center justify-center text-[#99CFDE]">
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
                   <h4 className="text-xl font-bold text-white">
-                    Signal Transmitted
+                    Message accepted
                   </h4>
                   <p className="font-mono text-xs text-[#99CFDE] max-w-xs">
-                    // PAYLOAD ENQUEUED. Dusyanth will reply via frequency coordinates shortly.
+                    Accepted by the email service. Thank you for getting in touch.
                   </p>
                   <button
                     onClick={() => {
@@ -214,13 +220,13 @@ export default function ContactSection() {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="block font-mono text-[10px] uppercase text-white/70 mb-1">
-                      FULL NAME // CALLSIGN
+                    <label htmlFor="contact-name" className="block font-mono text-[10px] uppercase text-white/70 mb-1">
+                      FULL NAME {"// CALLSIGN"}
                     </label>
                     <input
-                      type="text"
+                      type="text" autoComplete="name" maxLength={100}
                       required
-                      value={formData.name}
+                      id="contact-name" name="name" value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
@@ -230,13 +236,13 @@ export default function ContactSection() {
                   </div>
 
                   <div>
-                    <label className="block font-mono text-[10px] uppercase text-white/70 mb-1">
+                    <label htmlFor="contact-email" className="block font-mono text-[10px] uppercase text-white/70 mb-1">
                       EMAIL ADDRESS
                     </label>
                     <input
-                      type="email"
+                      type="email" autoComplete="email" maxLength={254}
                       required
-                      value={formData.email}
+                      id="contact-email" name="email" value={formData.email}
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
                       }
@@ -246,11 +252,11 @@ export default function ContactSection() {
                   </div>
 
                   <div>
-                    <label className="block font-mono text-[10px] uppercase text-white/70 mb-1">
+                    <label htmlFor="contact-vector" className="block font-mono text-[10px] uppercase text-white/70 mb-1">
                       INQUIRY FOCUS / VECTOR
                     </label>
                     <select
-                      value={formData.vector}
+                      id="contact-vector" name="vector" value={formData.vector}
                       onChange={(e) =>
                         setFormData({ ...formData, vector: e.target.value })
                       }
@@ -264,13 +270,13 @@ export default function ContactSection() {
                   </div>
 
                   <div>
-                    <label className="block font-mono text-[10px] uppercase text-white/70 mb-1">
+                    <label htmlFor="contact-message" className="block font-mono text-[10px] uppercase text-white/70 mb-1">
                       PROJECT BRIEF / MESSAGE
                     </label>
                     <textarea
-                      required
+                      minLength={10} maxLength={5000} required
                       rows={3}
-                      value={formData.message}
+                      id="contact-message" name="message" value={formData.message}
                       onChange={(e) =>
                         setFormData({ ...formData, message: e.target.value })
                       }
@@ -289,6 +295,7 @@ export default function ContactSection() {
                     </span>
                     <Send className="w-4 h-4" />
                   </button>
+                  <a href={mailto} onClick={() => setStatus("Email-client handoff requested. Send the message in your email app; this website has not sent it.")} className="block text-center text-sm underline text-[#99CFDE]">Open email client instead</a>
                 </form>
               )}
             </div>
