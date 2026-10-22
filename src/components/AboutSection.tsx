@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Award, GraduationCap, Flame } from "lucide-react";
+import { assetPath } from "@/lib/utils";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -193,7 +194,7 @@ export default function AboutSection() {
               {/* Inner Photo Tile */}
               <div className="relative w-full aspect-[1241/1267] overflow-hidden">
                 <Image
-                  src="/images/about-straight.png"
+                  src={assetPath("/images/about-straight.png")}
                   alt="Dusyanth Portrait"
                   fill
                   className="object-cover object-top group-hover:scale-[1.03] transition-transform duration-700 ease-out"

@@ -71,13 +71,23 @@ export default function ContactSection() {
   }, []);
 
   const mailto = `mailto:dushyanthtanna@gmail.com?subject=${encodeURIComponent(`Portfolio enquiry: ${formData.vector}`)}&body=${encodeURIComponent(`From: ${formData.name} <${formData.email}>\n\n${formData.message}`)}`;
+  // Static hosts (GitHub Pages) have no server runtime, so the contact API
+  // does not exist there; skip the call and hand off to the email client.
+  const staticExport = process.env.NEXT_PUBLIC_STATIC_EXPORT === "1";
+  const contactEndpoint = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/contact`;
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (busy.current) return;
     busy.current = true;
     setTransmitting(true); setStatus("Sending your message…");
+    if (staticExport) {
+      setStatus("This deployment is static, so online sending is disabled. Use ‘Open email client’ below, then send the prepared message in your email app. Nothing has been sent yet.");
+      busy.current = false;
+      setTransmitting(false);
+      return;
+    }
     try {
-      const response = await fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData), signal: AbortSignal.timeout(15000) });
+      const response = await fetch(contactEndpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData), signal: AbortSignal.timeout(15000) });
       const data = await response.json();
       if (data.fallback) { setStatus("Online sending is not configured. Use ‘Open email client’ below, then send the prepared message in your email app. Nothing has been sent yet."); return; }
       if (!response.ok || !data.accepted) throw new Error(data.error || "Unable to send your message.");

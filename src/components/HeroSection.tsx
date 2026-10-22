@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowDown } from "lucide-react";
 
 import TextPressure from "@/components/react-bits/TextPressure";
+import { assetPath } from "@/lib/utils";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -283,7 +284,7 @@ export default function HeroSection() {
         >
           {/* Layer 1: Natural portrait (base layer) */}
           <Image
-            src="/images/hero-side-front.png"
+            src={assetPath("/images/hero-side-front.png")}
             alt="Dusyanth photographic profile"
             fill
             className="object-contain object-bottom pointer-events-none "
@@ -299,7 +300,7 @@ export default function HeroSection() {
             style={{ clipPath: "circle(0px at 50% 50%)", opacity: 0 }}
           >
             <Image
-              src="/images/hero-side-scan.png"
+              src={assetPath("/images/hero-side-scan.png")}
               alt=""
               fill
               className="object-contain object-bottom pointer-events-none"

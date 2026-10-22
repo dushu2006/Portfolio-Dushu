@@ -1,6 +1,14 @@
 # Portfolio-Dushu
 My Portfolio
 
+## GitHub Pages deployment (live site)
+
+The live site is https://dushu2006.github.io/Portfolio-Dushu/ — a static export of this Next.js app, not the repository README. Every push to `main` runs [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml): `npm ci`, typecheck, lint, `npm run build:pages`, then the official Pages actions deploy the `out/` folder. One-time repository setting: **Settings → Pages → Source: GitHub Actions**.
+
+`npm run build:pages` produces the same static export locally; `npm run preview:pages` then serves `out/` under the Pages base path exactly like GitHub Pages will. The build serves the site under `/Portfolio-Dushu` (GitHub project pages live at `/<repo>`); if the repository is renamed, set `PAGES_BASE_PATH=/<new-name>` when building (the workflow picks up the default). Internal links and images honor the base path via `next/link` and `assetPath()` in `src/lib/utils.ts`.
+
+The GitHub Pages deployment is fully static: images are unoptimized and `/api/contact` does not exist, so the contact form detects the static deployment and hands the visitor a prefilled email-client link (**nothing has been sent** until they send it from their mail app). Real submission needs a Node/serverless host — see below; that flow is unchanged and covered by the browser suite.
+
 ## Verification and deployment (portfolio refinement)
 
 Use Node.js 22+:
