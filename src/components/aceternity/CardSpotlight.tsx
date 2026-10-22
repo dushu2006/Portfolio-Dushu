@@ -1,59 +1,47 @@
 "use client";
-
-import React, { useRef, useState, useCallback } from "react";
+import { useEffect, useRef, type CSSProperties, type HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
+import { usePointerMotion } from "@/lib/usePointerMotion";
 
-interface CardSpotlightProps extends React.HTMLAttributes<HTMLDivElement> {
+interface CardSpotlightProps extends HTMLAttributes<HTMLDivElement> {
   radius?: number;
   color?: string;
   children: React.ReactNode;
 }
 
-export function CardSpotlight({
-  children,
-  radius = 350,
-  color = "rgba(142, 52, 59, 0.22)",
-  className,
-  ...props
-}: CardSpotlightProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [opacity, setOpacity] = useState(0);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  }, []);
-
-  const handleMouseEnter = useCallback(() => {
-    setOpacity(1);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setOpacity(0);
-  }, []);
-
-  return (
-    <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className={cn(
-        "relative overflow-hidden rounded-2xl glass-card transition-all duration-300",
-        className
-      )}
-      {...props}
-    >
-      <div
-        className="pointer-events-none absolute -inset-px transition-opacity duration-300 z-10"
-        style={{
-          opacity,
-          background: `radial-gradient(${radius}px circle at ${position.x}px ${position.y}px, ${color}, transparent 80%)`,
-        }}
-      />
-      <div className="relative z-20 h-full">{children}</div>
-    </div>
-  );
+/** Local Aceternity-style surface. Pointer coordinates never enter React state. */
+export function CardSpotlight({ children, radius = 220, color = "var(--surface-spotlight)", className, style, onPointerMove, onPointerLeave, ...props }: CardSpotlightProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const frame = useRef(0);
+  const point = useRef({ x: 0, y: 0 });
+  const enabled = usePointerMotion();
+  useEffect(() => {
+    if (!enabled) ref.current?.style.setProperty("--spotlight-active", "0");
+    return () => { cancelAnimationFrame(frame.current); frame.current = 0; };
+  }, [enabled]);
+  return <div {...props} ref={ref} className={cn("card-spotlight", className)}
+    style={{ "--spotlight-radius": `${radius}px`, "--spotlight-color": color, ...style } as CSSProperties}
+    onPointerMove={event => {
+      onPointerMove?.(event);
+      if (!enabled || event.pointerType !== "mouse") return;
+      point.current = { x: event.clientX, y: event.clientY };
+      if (frame.current) return;
+      frame.current = requestAnimationFrame(() => {
+        frame.current = 0;
+        const el = ref.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        el.style.setProperty("--spotlight-x", `${point.current.x - rect.left}px`);
+        el.style.setProperty("--spotlight-y", `${point.current.y - rect.top}px`);
+        el.style.setProperty("--spotlight-active", "1");
+      });
+    }}
+    onPointerLeave={event => {
+      cancelAnimationFrame(frame.current); frame.current = 0;
+      ref.current?.style.setProperty("--spotlight-active", "0");
+      onPointerLeave?.(event);
+    }}>
+    <span className="spotlight-light" aria-hidden="true" />
+    <div className="spotlight-content">{children}</div>
+  </div>;
 }

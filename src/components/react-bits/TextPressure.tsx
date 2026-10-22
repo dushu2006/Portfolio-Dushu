@@ -132,8 +132,7 @@ const getRipplePressure = (
 
 export default function TextPressure({
   text = "DUSYANTH",
-  fontFamily = "Roboto Flex",
-  fontUrl = "https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&display=swap",
+  fontFamily = "Roboto Flex Variable",
 
   width = true,
   weight = true,
@@ -141,7 +140,6 @@ export default function TextPressure({
   alpha = false,
 
   flex = true,
-  stroke = true,
   scale = false as boolean | number,
 
   radius = 0.45,
@@ -238,7 +236,7 @@ export default function TextPressure({
       wake();
     };
     const handlePress = (e: PointerEvent) => {
-      if (!optionsRef.current.clickRipple) return;
+      if (!optionsRef.current.clickRipple || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const ripples = ripplesRef.current;
       ripples.push({ x: e.clientX, y: e.clientY, start: performance.now() });
       if (ripples.length > MAX_RIPPLES) ripples.shift();
@@ -256,7 +254,6 @@ export default function TextPressure({
     container?.addEventListener("pointerdown", handlePress);
 
     if (container) {
-      const { left, top, width: w, height: h } = container.getBoundingClientRect();
       // Initially, position virtual mouse far away so letters start thin
       mouseRef.current.x = -9999;
       mouseRef.current.y = -9999;
@@ -369,7 +366,7 @@ export default function TextPressure({
 
         // Proximity calculation from cursor to character center
         let pressure = 0;
-        if (cursor.seen) {
+        if (cursor.seen && !motionQuery?.matches) {
           const rawDist = dist(mouse, center);
           pressure = clamp01(1 - rawDist / maxDist);
           // Sharpen curve so letters broaden punchily under cursor
@@ -430,7 +427,7 @@ export default function TextPressure({
         ) {
           span.style.fontVariationSettings = settings;
           span.style.color = fillColor;
-          (span.style as any).webkitTextStroke = strokeVal;
+          span.style.webkitTextStroke = strokeVal;
           applied[i] = { span, settings, fillColor, strokeVal };
           changed = true;
         }
@@ -482,7 +479,7 @@ export default function TextPressure({
       className={`relative w-full h-full bg-transparent overflow-visible select-none ${className}`}
     >
       <style>{`
-        @import url('${fontUrl}');
+
 
         .tp-char-transition {
           will-change: font-variation-settings, color, -webkit-text-stroke;

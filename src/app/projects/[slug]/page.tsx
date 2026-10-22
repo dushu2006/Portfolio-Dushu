@@ -1,0 +1,13 @@
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { projects, repositoryUrl } from '@/lib/projects';
+import ProjectVisual from '@/components/ProjectVisual';
+export function generateStaticParams() { return projects.map(p => ({ slug: p.slug })); }
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) { const { slug } = await params; return { title: `${projects.find(p => p.slug === slug)?.name || 'Project'} — Dusyanth` }; }
+export default async function CaseStudy({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const index = projects.findIndex(p => p.slug === slug);
+  if (index < 0) notFound();
+  const project = projects[index], next = projects[(index+1)%projects.length];
+  return <main className="case-page"><nav className="flex justify-between text-sm text-[#99CFDE]"><Link href="/projects">← All projects</Link><Link href="/#projects">Portfolio</Link></nav><header className="py-16 sm:py-24"><p className="eyebrow">{project.category}</p><h1 className="font-editorial text-6xl sm:text-8xl mt-4">{project.name}</h1><p className="text-xl text-white/70 mt-6 max-w-2xl leading-relaxed">{project.summary}</p><div className="flex gap-4 mt-8">{project.repo && <a className="action-link" href={repositoryUrl(project)} target="_blank" rel="noreferrer">Inspect repository ↗</a>}{project.live && <a className="action-link secondary" href={project.live} target="_blank" rel="noreferrer">Live demo ↗</a>}</div></header><div className="case-visual"><ProjectVisual project={project}/><p className="text-xs text-white/45">Conceptual architecture illustration, not a screenshot.</p></div><div className="case-body"><section><p className="eyebrow">01 / PURPOSE</p><h2>The question.</h2><p>{project.problem}</p></section><section><p className="eyebrow">02 / APPROACH</p><h2>The implementation.</h2><p>{project.solution}</p>{project.stack.length>0 && <p className="mt-5 text-[#99CFDE]">{project.stack.join(' · ')}</p>}</section>{project.decisions.length>0 && <section><p className="eyebrow">03 / ENGINEERING</p><h2>Decisions that matter.</h2><ul>{project.decisions.map(d=><li key={d}>{d}</li>)}</ul></section>}<section><p className="eyebrow">SCOPE & EVIDENCE</p><h2>What this does not claim.</h2><p>{project.limitations}</p>{project.repo && <p className="mt-5 text-sm">Based on the public README, dependency manifests and source inspection on 22 October 2026. This is not an independent runtime certification of the project.</p>}</section></div><Link className="block border-t border-white/15 py-12 text-3xl font-editorial" href={`/projects/${next.slug}`}>Next / {next.name} →</Link></main>;
+}

@@ -1,4 +1,12 @@
 import type { Metadata } from "next";
+import "@fontsource-variable/roboto-flex/full.css";
+import "@fontsource-variable/space-grotesk";
+import "@fontsource-variable/newsreader";
+import "@fontsource-variable/newsreader/standard-italic.css";
+import "@fontsource-variable/jetbrains-mono";
+import "@fontsource-variable/syne";
+import "@fontsource/instrument-serif";
+import "@fontsource/instrument-serif/400-italic.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,8 +37,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
-      <body className="antialiased" suppressHydrationWarning>{children}</body>
+    <html lang="en" className="dark">
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

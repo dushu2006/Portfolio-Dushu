@@ -4,7 +4,7 @@ import { useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowDown, Sparkles } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 
 import TextPressure from "@/components/react-bits/TextPressure";
 
@@ -32,9 +32,8 @@ export default function HeroSection() {
     const x = clientX - rect.left;
     const y = clientY - rect.top;
 
-    const maskValue = `radial-gradient(circle 135px at ${x}px ${y}px, transparent 0%, transparent 60%, black 100%)`;
-    naturalContainer.style.webkitMaskImage = maskValue;
-    naturalContainer.style.maskImage = maskValue;
+    naturalContainer.style.clipPath = `circle(135px at ${x}px ${y}px)`;
+    naturalContainer.style.opacity = "1";
 
     lensRing.style.left = `${x}px`;
     lensRing.style.top = `${y}px`;
@@ -47,13 +46,13 @@ export default function HeroSection() {
     if (!naturalContainer || !lensRing) return;
 
     lensRing.style.opacity = "0";
-    naturalContainer.style.webkitMaskImage = "none";
-    naturalContainer.style.maskImage = "none";
+    naturalContainer.style.clipPath = "circle(0px at 50% 50%)";
+    naturalContainer.style.opacity = "0";
   }, []);
 
   useEffect(() => {
     const stage = stageRef.current;
-    if (!stage) return;
+    if (!stage || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const handleMouseMove = (e: MouseEvent) =>
       updateSpotlight(e.clientX, e.clientY);
@@ -86,6 +85,7 @@ export default function HeroSection() {
 
     if (!section || !stage || !nameEl || !supportingEl) return;
 
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const ctx = gsap.context(() => {
       if (typeof window !== "undefined" && !(window as unknown as { __portfolioLogged?: boolean }).__portfolioLogged) {
         (window as unknown as { __portfolioLogged?: boolean }).__portfolioLogged = true;
@@ -132,19 +132,6 @@ export default function HeroSection() {
         pinSpacing: false,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        onLeave: () => {
-          gsap.set(section, { visibility: "hidden" });
-        },
-        onEnterBack: () => {
-          gsap.set(section, { visibility: "visible" });
-        },
-        onLeaveBack: () => {
-          gsap.set([nameEl, supportingEl, stage], { opacity: 1, y: 0 });
-        },
-        onEnter: () => {
-          gsap.set([nameEl, supportingEl, stage], { opacity: 1, y: 0 });
-          gsap.set(section, { visibility: "visible" });
-        },
       });
 
       // Subtle atmospheric dimming as the foreground About sheet covers the stationary hero
@@ -193,20 +180,20 @@ export default function HeroSection() {
       </div>
 
       {/* Main Layout Container */}
-      <div className="relative z-10 max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-12 xl:px-14 w-full flex-1 flex flex-col justify-start">
+      <div className="pointer-events-none relative z-20 max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-12 xl:px-14 w-full flex-1 flex flex-col justify-start">
         
         {/* ========================================================= */}
         {/* GROUP 1: OVERWHELMINGLY DOMINANT NAME STATEMENT           */}
         {/* ========================================================= */}
         <div
           ref={nameContainerRef}
-          className="w-full flex flex-col items-start text-left z-20 pt-2 lg:pt-4"
+          className="hero-name pointer-events-auto w-full flex flex-col items-start text-left z-20 pt-2 lg:pt-4"
         >
           {/* Futuristic Cinematic Kinetic Variable-Font Typography — Expanded Vertically */}
-          <div className="w-full max-w-[540px] sm:max-w-[650px] md:max-w-[760px] lg:max-w-[860px] xl:max-w-[960px] 2xl:max-w-[1040px] h-[110px] sm:h-[145px] md:h-[185px] lg:h-[220px] xl:h-[255px] 2xl:h-[280px] relative flex items-center justify-start drop-shadow-[0_0_35px_rgba(153,207,222,0.3)]">
+          <div className="hero-title-box w-full max-w-[540px] sm:max-w-[650px] md:max-w-[760px] lg:max-w-[860px] xl:max-w-[960px] 2xl:max-w-[1040px] h-[110px] sm:h-[145px] md:h-[185px] lg:h-[220px] xl:h-[255px] 2xl:h-[280px] relative flex items-center justify-start drop-shadow-[0_0_35px_rgba(153,207,222,0.3)]">
             <TextPressure
               text="DUSYANTH"
-              fontFamily="Roboto Flex"
+              fontFamily="Roboto Flex Variable"
               flex={true}
               width={true}
               weight={true}
@@ -231,7 +218,7 @@ export default function HeroSection() {
         {/* ========================================================= */}
         <div
           ref={supportingContentRef}
-          className="w-full max-w-lg sm:max-w-xl lg:max-w-xl flex flex-col items-start gap-4 sm:gap-5 text-left z-20 mt-6 sm:mt-8 lg:mt-10"
+          className="hero-support pointer-events-auto w-full max-w-lg sm:max-w-xl lg:max-w-xl flex flex-col items-start gap-4 sm:gap-5 text-left z-20 mt-6 sm:mt-8 lg:mt-10"
         >
           {/* Subtitle */}
           <p className="font-editorial italic text-xl sm:text-2xl lg:text-3xl text-[#99CFDE] font-normal flex items-center gap-3">
@@ -252,7 +239,7 @@ export default function HeroSection() {
               href="#projects"
               className="inline-flex items-center gap-2.5 px-6 py-2.5 sm:py-3 rounded-full bg-[#8E343B] hover:bg-[#a63d45] border border-transparent hover:border-[#ff7875]/40 text-white text-xs sm:text-sm font-semibold transition-all duration-300 shadow-[0_4px_20px_rgba(142,52,59,0.4)] hover:shadow-[0_0_30px_rgba(142,52,59,0.7)] group active:scale-95"
             >
-              <span>Selected Work (10+)</span>
+              <span>Selected Work (10)</span>
               <ArrowDown className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
             </a>
             <a
@@ -272,33 +259,14 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* 
-          Mobile Portrait View (< 1024px):
-          Positioned naturally at the bottom-right corner with subtle ambient lighting
-        */}
-        <div className="lg:hidden w-full flex justify-end self-end -mr-6 sm:-mr-10 -mb-6 pt-4 relative">
-          <div className="pointer-events-none absolute left-1/4 bottom-10 w-[200px] h-[200px] rounded-full bg-[#356BCE]/20 blur-[80px] z-0" />
-          <div className="pointer-events-none absolute right-4 bottom-10 w-[180px] h-[180px] rounded-full bg-[#8E343B]/25 blur-[70px] z-0" />
-
-          <div className="relative z-10 w-[250px] sm:w-[320px] aspect-[1161/1355]">
-            <Image
-              src="/images/hero-side-front.png"
-              alt="Dusyanth Side Profile"
-              fill
-              unoptimized
-              className="object-contain object-bottom pointer-events-none"
-              priority
-            />
-          </div>
-        </div>
       </div>
 
       {/* 
-        Desktop Portrait (>= 1024px):
+        Shared responsive portrait:
         Refined dimensions anchored flush to the bottom-right corner.
         Preserves sharp rectangular boundary and binary scan reveal lens.
       */}
-      <div className="hidden lg:block absolute right-0 bottom-0 z-10 w-[430px] xl:w-[490px] 2xl:w-[560px] aspect-[1161/1355] pointer-events-auto">
+      <div className="hero-portrait absolute right-0 bottom-0 z-10 w-[430px] xl:w-[490px] 2xl:w-[560px] aspect-[1161/1355] pointer-events-auto">
         {/* Studio Lighting: Soft diffused blue/cyan glow on the LEFT side of the portrait */}
         <div className="pointer-events-none absolute -left-28 top-1/4 w-[360px] h-[400px] rounded-full bg-[#356BCE]/30 blur-[130px] z-0" />
         <div className="pointer-events-none absolute -left-14 top-1/3 w-[220px] h-[260px] rounded-full bg-[#99CFDE]/20 blur-[90px] z-0" />
@@ -310,34 +278,33 @@ export default function HeroSection() {
         {/* Interactive Dual-Layer Stage with Sharp Rectangular Edges */}
         <div
           ref={stageRef}
-          className="relative z-10 w-full h-full cursor-crosshair group filter drop-shadow-[0_25px_50px_rgba(0,0,0,0.85)]"
+          className="relative z-10 w-full h-full cursor-crosshair group"
           id="hero-portrait-stage"
         >
-          {/* Layer 1: Digital Binary Scan Portrait (base layer) */}
+          {/* Layer 1: Natural portrait (base layer) */}
           <Image
-            src="/images/hero-side-scan.png"
-            alt="Dusyanth Digital Binary Scan Profile"
+            src="/images/hero-side-front.png"
+            alt="Dusyanth photographic profile"
             fill
-            unoptimized
-            className="object-contain object-bottom pointer-events-none contrast-125 brightness-110"
+            className="object-contain object-bottom pointer-events-none "
             priority
-            sizes="(max-width: 1280px) 430px, (max-width: 1536px) 490px, 560px"
+            sizes="(max-width: 600px) min(56vw, 245px), (max-width: 1023px) min(45vw, 300px), (max-height: 760px) 64svh, (max-width: 1279px) 430px, (max-width: 1535px) 490px, 560px"
           />
 
-          {/* Layer 2: Natural Photographic Side Profile (spotlight radial mask reveal) */}
+          {/* Layer 2: Binary scan, clipped to the cursor-following circular lens */}
           <div
             ref={naturalContainerRef}
             className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none"
             id="hero-natural-container"
+            style={{ clipPath: "circle(0px at 50% 50%)", opacity: 0 }}
           >
             <Image
-              src="/images/hero-side-front.png"
-              alt="Dusyanth Photographic Side Profile"
+              src="/images/hero-side-scan.png"
+              alt=""
               fill
-              unoptimized
               className="object-contain object-bottom pointer-events-none"
-              priority
-              sizes="(max-width: 1280px) 430px, (max-width: 1536px) 490px, 560px"
+              loading="eager"
+              sizes="(max-width: 600px) min(56vw, 245px), (max-width: 1023px) min(45vw, 300px), (max-height: 760px) 64svh, (max-width: 1279px) 430px, (max-width: 1535px) 490px, 560px"
             />
           </div>
 

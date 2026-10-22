@@ -26,6 +26,7 @@ export default function AboutSection() {
 
     if (!section || !heading || !bio || !stats || !imageContainer) return;
 
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const ctx = gsap.context(() => {
       // 1. Heading Reveal with ScrollTrigger
       gsap.fromTo(
@@ -187,17 +188,15 @@ export default function AboutSection() {
           <div className="lg:col-span-6 flex justify-center lg:justify-end">
             <div
               ref={imageContainerRef}
-              className="relative w-full max-w-[380px] sm:max-w-[430px] rounded-3xl bg-white p-3 sm:p-3.5 shadow-[0_22px_55px_-15px_rgba(17,18,21,0.2)] border-2 border-[#111215]/10 group transition-all duration-500 hover:shadow-[0_28px_65px_-15px_rgba(142,52,59,0.25)] hover:border-[#8E343B]/30"
+              className="relative w-full max-w-[430px] group"
             >
               {/* Inner Photo Tile */}
-              <div className="relative w-full aspect-[1241/1267] rounded-2xl overflow-hidden bg-[#DDD7CD]/40">
+              <div className="relative w-full aspect-[1241/1267] overflow-hidden">
                 <Image
                   src="/images/about-straight.png"
                   alt="Dusyanth Portrait"
                   fill
-                  unoptimized
                   className="object-cover object-top group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-                  priority
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 350px"
                 />
               </div>
